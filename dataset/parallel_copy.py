@@ -2,8 +2,6 @@ import pickle
 
 import torch
 from torch.utils.data import Dataset
-from torch.utils.data.dataloader import DataLoader
-
 
 class CopyDataset(Dataset):
     def __init__(self, split, length=6, num_digits=3):
@@ -38,7 +36,7 @@ class CopyDataset(Dataset):
                 break # ok
         
         # concatenate the problem specification and the solution
-        cat = torch.cat((inp, torch.tensor([self.sep_id], inp, dtype=torch.long)), dim=0)
+        cat = torch.cat((inp, torch.tensor([self.sep_id], dtype=torch.long), inp), dim=0)
 
         # the inputs to the transformer will be the offset sequence
         x = cat[:-1].clone()
@@ -203,13 +201,10 @@ class ParallelCopyDataset(Dataset):
                 start_mask[pos + segment_length:, pos + 1:pos + segment_length] = 0
                 local_mask = self._get_local_mask(segment_length)
                 thread_0_pos = pos
-                try:
-                    start_mask[
-                        thread_0_pos:thread_0_pos + segment_length, 
-                        thread_0_pos:thread_0_pos + segment_length
-                    ] = local_mask
-                except:
-                    import ipdb; ipdb.set_trace()
+                start_mask[
+                    thread_0_pos:thread_0_pos + segment_length, 
+                    thread_0_pos:thread_0_pos + segment_length
+                ] = local_mask
             pos += segment_length
         return start_mask
 
