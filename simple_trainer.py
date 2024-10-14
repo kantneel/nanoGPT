@@ -8,7 +8,7 @@ from collections import defaultdict
 
 import torch
 from torch.utils.data.dataloader import DataLoader
-from mingpt.utils import CfgNode as CN
+from utils import CfgNode as CN
 
 class Trainer:
 
@@ -61,8 +61,9 @@ class Trainer:
     def run(self):
         model, config = self.model, self.config
 
+
         # setup the optimizer
-        self.optimizer = model.configure_optimizers(config)
+        self.optimizer = model.configure_optimizers(config.weight_decay, config.learning_rate, config.betas, self.device)
 
         # setup the dataloader
         train_loader = DataLoader(

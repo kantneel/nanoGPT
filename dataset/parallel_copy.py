@@ -97,7 +97,7 @@ class ParallelCopyDataset(Dataset):
         return 10000 # ...
     
     def get_vocab_size(self):
-        return self.num_digits + self.extra_threads + 1 # +1 for sep
+        return self.num_digits + self.num_threads
     
     def get_block_size(self):
         # the length of the sequence that will feed into transformer, 
